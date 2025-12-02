@@ -58,58 +58,68 @@ Wrote README.md, technical_report.pdf, and presentation.pptx
 
 Summary of results:
 
-The final selected model for fraud detection was a Tuned Random Forest classifier (RF_tuned). 
-This model was chosen based on PR-AUC, Recall, F1-score, and Precision — the key metrics for 
-imbalanced fraud detection. Hyperparameter tuning significantly improved model precision and PR-AUC 
-while maintaining high recall.
+After evaluating multiple models (Logistic Regression, Random Forest, Gradient Boosting) under both class-weighting and SMOTE strategies, two top-performing models emerged:
 
-Overall Performance on the Test Set (RF_tuned):
+Random Forest (Class Weight)
 
-Accuracy 0.91
-Precision (Fraud) 0.65
-Recall (Fraud) 0.72
-F1-score (Fraud) 0.685
-ROC-AUC 0.94
-PR-AUC 0.738
+Random Forest (SMOTE)
 
-Interpretation of Model Behavior:
+To comply with ML best practices and course requirements, the top model (Random Forest with class weights) was hyperparameter-tuned using a lightweight GridSearchCV.
+This produced the best-performing model in the entire project, outperforming SMOTE-based models across all major metrics.
+
+The final selected model is:
+Random Forest (Tuned)
+
+Overall Performance on the Test Set:
+
+Accuracy	0.92
+Precision (Fraud)	0.65
+Recall (Fraud)	0.72
+F1-score (Fraud)	0.69
+ROC-AUC	0.94
+PR-AUC	0.74
+
+Interpretation of Model Behavior
 
 High ROC-AUC (0.94)
-Shows that the model is excellent at separating fraudulent from legitimate providers across all decision thresholds.
+Indicates excellent separation between fraud and non-fraud providers.
 
-Strong PR-AUC (0.738)
-This is especially important in highly imbalanced datasets (~9% fraud).
-It indicates the model ranks fraud cases much better than baseline and handles imbalance effectively.
+High PR-AUC (0.74)
+Strong performance under severe class imbalance (fraud ≈ 9%).
 
-Recall of 0.72
-The model successfully captures 72% of all fraudulent providers, meeting the project’s priority of maximizing fraud detection.
+Recall = 0.72
+Captures 72% of fraudulent providers → meets project priority (catch fraud).
 
-Precision of 0.65
-This means 65% of providers flagged as “fraud” are truly fraudulent, reducing unnecessary investigations compared to earlier models.
-This balance between Precision and Recall is ideal for fraud detection, where missing fraud is more costly than investigating some legitimate cases.
+Precision = 0.65
+Means 65% of flagged providers are actually fraudulent → strong for real-world fraud screening where false positives are acceptable.
 
 Error Analysis Findings:
-False Positives (FP): 39 
+False Positives (FP): 51 
 False Negatives (FN): 28
 
-False Positives tend to have unusually high predicted fraud scores (~0.71) and show aggressive 
-claim behavior.
-False Negatives show low predicted fraud scores (~0.24) and are typically low-activity providers.
+Key Insights:
+Model effectively captures high-risk behavior.
+Missed fraud cases tend to be low-volume providers.
+Adding specialty-based normalization and temporal trends can reduce FN cases.
 
-After comparing all baseline models, the top-performing models were:
+After comparing all baseline models, the two top-performing candidates were identified:
+Random Forest (Class Weight) – highest PR-AUC and strongest precision
+Random Forest (SMOTE) – strongest Recall & higher sensitivity to fraud
 
-1. Random Forest (Class Weight) – highest PR-AUC
-2. Random Forest (SMOTE) – strongest Recall & F1
+To refine and confirm the best performer, a lightweight GridSearchCV hyperparameter tuning was applied to the class-weighted Random Forest using a reduced hyperparameter grid (n_estimators, max_depth, min_samples_split).
 
-A lightweight GridSearchCV tuning was applied to Random Forest using a reduced hyperparameter 
-grid (n_estimators, max_depth, min_samples_split). The tuning produced the final best model:
+The tuning produced the final best model:
 
-RF_tuned:
-- n_estimators = 200
-- max_depth = 10
-- min_samples_split = 5
+RF_tuned (Final Model):
 
-This tuned model achieved the best balance of Recall, Precision, F1-score, and PR-AUC.
+n_estimators = 200
+
+max_depth = 10
+
+min_samples_split = 5
+
+This tuned model achieved the best overall balance of
+Recall, Precision, F1-score, ROC-AUC, and PR-AUC, and therefore became the final selected model for the project.
 
 
 Reproduction Instructions:
