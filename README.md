@@ -58,32 +58,58 @@ Wrote README.md, technical_report.pdf, and presentation.pptx
 
 Summary of results:
 
-The final selected model for fraud detection was a Random Forest classifier combined with SMOTE to address severe class imbalance in the dataset. The model demonstrated strong overall performance, especially in recovering fraudulent providers (positive class), which is the primary objective in healthcare fraud detection systems.
+The final selected model for fraud detection was a Tuned Random Forest classifier (RF_tuned). 
+This model was chosen based on PR-AUC, Recall, F1-score, and Precision — the key metrics for 
+imbalanced fraud detection. Hyperparameter tuning significantly improved model precision and PR-AUC 
+while maintaining high recall.
 
-Overall Performance on the Test Set:
-Accuracy        	0.91
-Precision (Fraud)	0.53
-Recall (Fraud)	        0.72
-F1-score (Fraud)	0.61
-ROC-AUC           	0.93
-PR-AUC          	0.65
+Overall Performance on the Test Set (RF_tuned):
+
+Accuracy 0.91
+Precision (Fraud) 0.65
+Recall (Fraud) 0.72
+F1-score (Fraud) 0.685
+ROC-AUC 0.94
+PR-AUC 0.738
 
 Interpretation of Model Behavior:
-High ROC-AUC (0.93) indicates the model is very good at distinguishing fraudulent from legitimate providers across all classification thresholds.
 
-Moderate PR-AUC (0.65) is expected given the dataset’s strong imbalance (only ~9% fraud cases). This value reflects the realistic difficulty of identifying rare fraud patterns.
+High ROC-AUC (0.94)
+Shows that the model is excellent at separating fraudulent from legitimate providers across all decision thresholds.
 
-Recall of 0.72 for fraudulent providers shows that the model successfully captures 72% of all fraud cases, meeting the project’s priority of maximizing fraud detection.
+Strong PR-AUC (0.738)
+This is especially important in highly imbalanced datasets (~9% fraud).
+It indicates the model ranks fraud cases much better than baseline and handles imbalance effectively.
 
-Precision of 0.53 indicates that roughly half of providers flagged as “fraud” are actually legitimate, which is acceptable in fraud prevention settings, where catching fraud is far more critical than investigating a few legitimate cases.
+Recall of 0.72
+The model successfully captures 72% of all fraudulent providers, meeting the project’s priority of maximizing fraud detection.
+
+Precision of 0.65
+This means 65% of providers flagged as “fraud” are truly fraudulent, reducing unnecessary investigations compared to earlier models.
+This balance between Precision and Recall is ideal for fraud detection, where missing fraud is more costly than investigating some legitimate cases.
 
 Error Analysis Findings:
-False Positives (FP)	65	
-Legitimate providers flagged as fraud.
-False Positives tend to have unusually high predicted fraud scores (y_proba = 0.71)
-False Negatives (FN)	28
-Fraudulent providers missed by the model.
-False Negatives show low predicted fraud scores (y_proba = 0.24)
+False Positives (FP): 39 
+False Negatives (FN): 28
+
+False Positives tend to have unusually high predicted fraud scores (~0.71) and show aggressive 
+claim behavior.
+False Negatives show low predicted fraud scores (~0.24) and are typically low-activity providers.
+
+After comparing all baseline models, the top-performing models were:
+
+1. Random Forest (Class Weight) – highest PR-AUC
+2. Random Forest (SMOTE) – strongest Recall & F1
+
+A lightweight GridSearchCV tuning was applied to Random Forest using a reduced hyperparameter 
+grid (n_estimators, max_depth, min_samples_split). The tuning produced the final best model:
+
+RF_tuned:
+- n_estimators = 200
+- max_depth = 10
+- min_samples_split = 5
+
+This tuned model achieved the best balance of Recall, Precision, F1-score, and PR-AUC.
 
 
 Reproduction Instructions:
