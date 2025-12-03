@@ -58,59 +58,18 @@ Wrote README.md, technical_report.pdf, and presentation.pptx
 
 Summary of results:
 
-After evaluating multiple models (Logistic Regression, Random Forest, Gradient Boosting) under both class-weighting and SMOTE strategies, two top-performing models emerged:
+Multiple models were evaluated under both class weighting and SMOTE.
+The two strongest models before tuning were:
 
-Random Forest (Class Weight)
+Random Forest (Class Weight) – higher Precision
 
-Random Forest (SMOTE)
+Random Forest (SMOTE) – highest Recall & better sensitivity to fraud
 
-To comply with ML best practices and course requirements, the top model (Random Forest with class weights) was hyperparameter-tuned using a lightweight GridSearchCV.
-This produced the best-performing model in the entire project, outperforming SMOTE-based models across all major metrics.
+To meet the project goal (maximizing fraud detection), the team selected Random Forest (with SMOTE) for final tuning.
 
-The final selected model is:
-Random Forest (Tuned)
-
-Overall Performance on the Test Set:
-
-Accuracy	0.92
-Precision (Fraud)	0.65
-Recall (Fraud)	0.72
-F1-score (Fraud)	0.69
-ROC-AUC	0.94
-PR-AUC	0.74
-
-Interpretation of Model Behavior
-
-High ROC-AUC (0.94)
-Indicates excellent separation between fraud and non-fraud providers.
-
-High PR-AUC (0.74)
-Strong performance under severe class imbalance (fraud ≈ 9%).
-
-Recall = 0.72
-Captures 72% of fraudulent providers → meets project priority (catch fraud).
-
-Precision = 0.65
-Means 65% of flagged providers are actually fraudulent → strong for real-world fraud screening where false positives are acceptable.
-
-Error Analysis Findings:
-False Positives (FP): 51 
-False Negatives (FN): 28
-
-Key Insights:
-Model effectively captures high-risk behavior.
-Missed fraud cases tend to be low-volume providers.
-Adding specialty-based normalization and temporal trends can reduce FN cases.
-
-After comparing all baseline models, the two top-performing candidates were identified:
-Random Forest (Class Weight) – highest PR-AUC and strongest precision
-Random Forest (SMOTE) – strongest Recall & higher sensitivity to fraud
-
-To refine and confirm the best performer, a lightweight GridSearchCV hyperparameter tuning was applied to the class-weighted Random Forest using a reduced hyperparameter grid (n_estimators, max_depth, min_samples_split).
-
-The tuning produced the final best model:
-
-RF_tuned (Final Model):
+A lightweight GridSearchCV hyperparameter tuning was then applied on the SMOTE version, leading to the final best-performing model.
+Final Selected Model: Random Forest (SMOTE + Tuned)
+Final Hyperparameters
 
 n_estimators = 200
 
@@ -118,8 +77,48 @@ max_depth = 10
 
 min_samples_split = 5
 
-This tuned model achieved the best overall balance of
-Recall, Precision, F1-score, ROC-AUC, and PR-AUC, and therefore became the final selected model for the project.
+Overall Performance on the Test Set:
+
+Accuracy	0.91
+Precision (Fraud)	0.50
+Recall (Fraud)	0.67
+F1-score (Fraud)	0.58
+ROC-AUC	0.922
+PR-AUC	0.627
+
+Interpretation of Model Behavior:
+ROC-AUC = 0.922
+
+Strong separation between fraud and non-fraud providers.
+
+PR-AUC = 0.627
+
+Solid performance under severe class imbalance (~9% fraud cases).
+
+Recall = 0.67
+
+Detects 67% of all fraud cases — matching the project’s highest priority.
+
+Precision = 0.50
+
+Error Analysis:
+False Positives (FP): 67
+Legitimate providers incorrectly flagged.
+False Negatives (FN): 33
+Fraudulent providers that were missed.
+Insights:
+FPs often show borderline-high fraud-probability scores.
+FNs are mostly low-activity providers with subtle fraud patterns.
+Additional temporal and specialty-based features may reduce FN cases.
+
+Why This Model Was Selected
+
+The SMOTE-tuned Random Forest offered the best overall balance for fraud detection:
+Highest fraud Recall
+High ROC-AUC
+Competitive Precision
+Strong PR-AUC
+Best tradeoff between FP vs FN
 
 
 Reproduction Instructions:
@@ -139,11 +138,9 @@ Notebook 1: 01_data_exploration_and_feature_engineering.ipynb
 This notebook: cleans the data, merges the datasets, creates features and saves a new file: provider_level.csv, this file will be used in Notebook 2.
 
 Notebook 2: 02_modeling.ipynb
-This notebook: loads provider_level.csv, fixes class imbalance, trains multiple models and picks the best one and saves: best_model.pkl, test_predictions_for_evaluation.csv, these files will be used in Notebook 3.
-
+This notebook: loads provider_level.csv, fixes class imbalance, trains multiple models and picks the best one and saves: best_model.pkl, test_predictions_for_evaluation.csv, these files will be used in Notebook 3
 
 Notebook 3: 03_evaluation.ipynb
-
 This notebook: loads best_model.pkl, loads test_predictions_for_evaluation.csv, computes all metrics, plots ROC & PR curves, shows confusion matrix, shows false positives and false negatives and gives the final performance numbers.
 
 
